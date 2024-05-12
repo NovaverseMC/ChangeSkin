@@ -15,7 +15,7 @@
     <name>ChangeSkinCore</name>
 
     <repositories>
-        <!--BungeeCord-->
+        <!-- BungeeCord -->
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
@@ -31,12 +31,13 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--Core utility classes-->
+        <!-- Core utility classes -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <!-- Old version that is still be used in Sponge  -->
             <version>21.0</version>
+            <scope>provided</scope>
             <!-- Exclude compile time deps not marked as such on upstream  -->
             <exclusions>
                 <exclusion>
@@ -62,7 +63,7 @@
             </exclusions>
         </dependency>
 
-        <!--Database pooling-->
+        <!-- Database pooling -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
@@ -77,7 +78,7 @@
             </exclusions>
         </dependency>
 
-        <!--Logging framework implements slf4j which is required by hikari-->
+        <!-- Logging framework implements slf4j which is required by hikari -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>

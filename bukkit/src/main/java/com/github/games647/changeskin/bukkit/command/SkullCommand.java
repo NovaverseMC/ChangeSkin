@@ -1,8 +1,6 @@
 package com.github.games647.changeskin.bukkit.command;
 
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.github.games647.changeskin.bukkit.ChangeSkinBukkit;
-import com.github.games647.changeskin.bukkit.ServerVersion;
 import com.github.games647.changeskin.core.model.skin.SkinModel;
 
 import java.lang.invoke.MethodHandle;
@@ -11,6 +9,8 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -35,14 +35,12 @@ public class SkullCommand implements CommandExecutor {
     static {
         MethodHandle methodHandle = null;
         try {
-            ServerVersion version = new ServerVersion(Bukkit.getServer().getClass());
-
-            Class<?> clazz = Class.forName(version.getOBCPackage() + ".inventory.CraftMetaSkull");
+            Class<?> clazz = SpigotReflectionUtil.getOBCClass("inventory.CraftMetaSkull");
             Field profileField = clazz.getDeclaredField("profile");
             profileField.setAccessible(true);
 
             methodHandle = MethodHandles.lookup().unreflectSetter(profileField)
-                    .asType(MethodType.methodType(Void.class, SkullMeta.class, Object.class));
+                    .asType(MethodType.methodType(Void.class, SkullMeta.class, GameProfile.class));
         } catch (ReflectiveOperationException ex) {
             Logger logger = LoggerFactory.getLogger(SkullCommand.class);
             logger.info("Cannot find profile field for setting skulls", ex);
@@ -105,10 +103,10 @@ public class SkullCommand implements CommandExecutor {
         try {
             SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
 
-            WrappedGameProfile gameProfile = new WrappedGameProfile(UUID.randomUUID(), null);
-            plugin.getApi().applyProperties(gameProfile, skinData);
+            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            plugin.getApi().applyProperties(profile, skinData);
 
-            skullProfileSetter.invokeExact(skullMeta, gameProfile.getHandle());
+            skullProfileSetter.invokeExact(skullMeta, profile);
             itemStack.setItemMeta(skullMeta);
         } catch (Exception ex) {
             plugin.getLog().info("Failed to set skull item {} to {}", itemStack, skinData, ex);

@@ -15,6 +15,7 @@ import com.github.games647.changeskin.core.SkinStorage;
 import com.github.games647.changeskin.core.message.ChannelMessage;
 import com.github.games647.changeskin.core.message.NamespaceKey;
 import com.github.games647.changeskin.core.model.UserPreference;
+import com.github.retrooper.packetevents.PacketEvents;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -44,7 +46,16 @@ public class ChangeSkinBukkit extends JavaPlugin implements PlatformPlugin<Comma
     private final BukkitSkinAPI api = new BukkitSkinAPI(this);
 
     @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false); // Read-only packet events
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
+        PacketEvents.getAPI().init();
+
         try {
             bungeeCord = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
         } catch (Exception | NoSuchMethodError ex) {

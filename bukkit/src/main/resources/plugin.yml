@@ -11,8 +11,8 @@ description: |
 website: ${project.url}
 dev-url: ${project.url}
 
-# Without ProtocolLib the plugin does not work at all
-depend: [ProtocolLib]
+# Without packetevents the plugin does not work at all
+depend: [packetevents]
 
 # This plugin don't have to be transformed for compatibility with Minecraft >= 1.13
 api-version: 1.13
