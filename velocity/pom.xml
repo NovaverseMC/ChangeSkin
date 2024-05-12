@@ -1,5 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -9,15 +11,27 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!--This have to be in lowercase because it's used by plugin.yml-->
-    <artifactId>changeskin.bungee</artifactId>
+    <!-- This have to be in lowercase because it's used by the plugin description -->
+    <artifactId>changeskin.velocity</artifactId>
     <packaging>jar</packaging>
 
-    <!--Represents the main plugin-->
-    <name>ChangeSkinBungee</name>
+    <!-- Represents the main plugin -->
+    <name>ChangeSkinVelocity</name>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filtering-java-templates</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -26,8 +40,8 @@
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <artifactSet>
                         <excludes>
-                            <!--Those classes are already present in BungeeCord version-->
-                            <exclude>net.md-5:bungeecord-config</exclude>
+                            <!-- Already bundled inside Velocity -->
+                            <exclude>org.slf4j:*</exclude>
                         </excludes>
                     </artifactSet>
                     <relocations>
@@ -36,15 +50,10 @@
                             <shadedPattern>changeskin.hikari</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org.slf4j</pattern>
-                            <shadedPattern>changeskin.slf4j</shadedPattern>
+                            <pattern>net.md_5.bungee.config</pattern>
+                            <shadedPattern>changeskin.config</shadedPattern>
                         </relocation>
                     </relocations>
-                    <!-- Rename the service file too to let SLF4J api find our own relocated jdk logger -->
-                    <!-- Located in META-INF/services -->
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                    </transformers>
                 </configuration>
                 <executions>
                     <execution>
@@ -59,27 +68,27 @@
     </build>
 
     <repositories>
-        <!--BungeeCord-->
         <repository>
-            <id>codemc-repo</id>
-            <url>https://repo.codemc.io/repository/maven-public/</url>
+            <id>papermc-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!--Plugin core-->
+        <!-- Plugin core -->
         <dependency>
             <groupId>com.github.games647</groupId>
             <artifactId>changeskin.core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!--Server API with non-api classes that are necessary to set the skin-->
+        <!-- Velocity API -->
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
-            <version>1.20-R0.3-SNAPSHOT</version>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>3.3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
 </project>
